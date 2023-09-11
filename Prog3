@@ -1,0 +1,25 @@
+from itertools import permutations
+graph = [
+[0, 10, 20, 30],
+[10, 0, 5, 15],
+[20, 5, 0, 8],
+[30, 15, 8, 0]
+]
+num_nodes = len(graph)
+start_node = 2
+# Find the optimal route and minimum cost
+best_route = None
+min_cost = float('inf')
+for perm in permutations(range(1, num_nodes)):
+    route = [start_node] + list(perm) + [start_node]
+# Calculate the cost of the route
+    cost = sum(graph[start][dest] for start, dest in zip(route, route[1:]))
+    
+    if cost < min_cost:
+        best_route = route
+        min_cost = cost
+
+formatted_route = ' -> '.join(map(str, best_route))
+print("Optimal Route:", formatted_route)
+print("Total Cost:", min_cost)        
+    
