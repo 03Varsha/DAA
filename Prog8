@@ -1,0 +1,50 @@
+from collections import defaultdict
+
+class Graph:
+    def __init__(self, subjects, students):
+        self.graph = defaultdict(list)
+        self.students = students
+        self.colors = {subject: set(range(1, len(subjects) + 1)) for subject in subjects}
+
+    def add_edge(self, subject1, subject2):
+        self.graph[subject1].append(subject2)
+        self.graph[subject2].append(subject1)
+
+    def graph_coloring(self):
+        color_map = {}
+        student_schedule = defaultdict(set)
+
+        for subject in self.graph:
+            used_colors = {color_map[neighbor] for neighbor in self.graph[subject] if neighbor in color_map}
+            available_color = self.colors[subject] - used_colors
+            color_map[subject] = min(available_color) if available_color else max(self.colors[subject]) + 1
+            
+            for student in self.students.get(subject, []):
+                student_schedule[student].add(color_map[subject])
+
+        return color_map, student_schedule
+
+    def get_minimum_time_slots(self):
+        return max(self.graph_coloring()[0].values())
+
+# Example usage
+subjects = ['Math', 'Physics', 'Chemistry', 'Biology']
+students = {
+    'Math': ['Alice', 'Bob', 'Charlie'],
+    'Physics': ['Alice', 'Charlie', 'David'],
+    'Chemistry': ['Bob', 'Charlie', 'Eve'],
+    'Biology': ['David', 'Eve']
+}
+graph = Graph(subjects, students)
+graph.add_edge('Math', 'Physics')
+graph.add_edge('Math', 'Chemistry')
+graph.add_edge('Physics', 'Chemistry')
+graph.add_edge('Physics', 'Biology')
+
+color_map, student_schedule = graph.graph_coloring()
+print("Exam Schedule:")
+for student, exams in student_schedule.items():
+    print(f"{student}: Exams at time slots {exams}")
+
+minimum_time_slots = graph.get_minimum_time_slots()
+print(f"\nMinimum time slots needed: {minimum_time_slots}")
