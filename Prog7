@@ -1,0 +1,23 @@
+import itertools
+
+def calculate_distance(p1, p2):
+    return ((p1[0] - p2[0]) ** 2 + (p1[1] - p2[1]) ** 2) ** 0.5
+
+def find_optimal_drilling_time(points, toolbox_time):
+    num_points = len(points)
+    distances = [[calculate_distance(p1, p2) for p2 in points] for p1 in points]
+    optimal_drilling_time = float('inf')
+    for permutation in itertools.permutations(range(num_points)):
+        total_distance = sum(distances[p1][p2] for p1, p2 in zip(permutation, permutation[1:]))
+        drilling_time = total_distance + (num_points - 1) * toolbox_time
+        optimal_drilling_time = min(optimal_drilling_time, drilling_time)
+    return optimal_drilling_time
+
+def main():
+    points = [(0, 0, 1), (3, 0, 2), (0, 4, 1), (3, 4, 2)]
+    toolbox_time = 5
+    optimal_time = find_optimal_drilling_time(points, toolbox_time)
+    print("Optimal Drilling Time:", optimal_time + 1)
+
+if __name__ == "__main__":
+    main()
